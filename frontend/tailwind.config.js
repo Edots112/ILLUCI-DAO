@@ -7,7 +7,12 @@ module.exports = {
       bold: ['Modak'],
       roboto: ['Roboto'],
     },
-    extend: {},
+    extend: {
+      backgroundImage: {
+        'hero-page': "url('/src/assets/image/hero-page.jpg')",
+        'hero-pages': "url('/src/assets/image/hero-page.jpg')",
+      },
+    },
   },
   plugins: [],
 };

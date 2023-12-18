@@ -1,13 +1,15 @@
-import React from 'react';
+import React, { useRef } from 'react';
+import LandingPage from '../components/LandingPage';
+import AboutPage from '../components/AboutPage';
+import CollectionPage from '../components/CollectionPage';
 
 const Home = () => {
   return (
-    <div>
-      <h1 className="font-pixel ">Home</h1>
-      <p className="font-pixel text-2xl font-bold">
-        lorem ipsum text testing erik heter jag
-      </p>
-    </div>
+    <>
+      <LandingPage />
+      <AboutPage />
+      <CollectionPage />
+    </>
   );
 };
 
