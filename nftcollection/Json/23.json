@@ -1,0 +1,14 @@
+{
+	"name": "ILLUCI DAO #23",
+	"description": "100 unique NFTs. With this NFT you grants you access to a platform offering alot of cool stuff",
+	"image": "ipfs://bafybeie7pl5d7ekojxdzmqzchtjumbwwhschopyxwgdg2hhwjuxislyex4/23.png",
+	"edition": 23,
+	"attributes": [
+		{ "trait_type": "Hats", "value": "basker" },
+		{ "trait_type": "Club", "value": "golfclub" },
+		{ "trait_type": "Eyes", "value": "red eye" },
+		{ "trait_type": "mouth", "value": "eager" },
+		{ "trait_type": "color", "value": "pink" },
+		{ "trait_type": "Background", "value": "Animeted city" }
+	]
+}
