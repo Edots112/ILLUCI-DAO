@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: SEE LICENSE IN LICENSE
-pragma solidity 0.8.23;
+pragma solidity 0.8.20;
 
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
@@ -20,13 +20,11 @@ contract ILLUCI is ERC721, Ownable {
     string public baseURI;
     string public baseExtension = ".json";
 
-    constructor(
-        address initialOwner
-    ) ERC721("ILLUCI", "ILU") Ownable(initialOwner) {
+    constructor() ERC721("ILLUCI", "ILU") Ownable(msg.sender) {
         baseURI = _baseURI();
         for (uint256 i = 0; i < TOKEN_RESERVED; i++) {
             totalSupply += 1;
-            _safeMint(initialOwner, totalSupply);
+            _safeMint(msg.sender, totalSupply);
         }
         totalSupply = TOKEN_RESERVED;
     }
@@ -62,6 +60,10 @@ contract ILLUCI is ERC721, Ownable {
             mintedPerWallet[msg.sender] += 1;
             _safeMint(msg.sender, totalSupply);
         }
+    }
+
+    function hasMinted(address user) public view returns (bool) {
+        return mintedPerWallet[user] > 0;
     }
 
     // Owner functions

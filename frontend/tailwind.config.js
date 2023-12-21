@@ -4,7 +4,7 @@ module.exports = {
   theme: {
     fontFamily: {
       pixel: ['DotGothic16'],
-      bold: ['Modak'],
+      bolda: ['Modak'],
       roboto: ['Roboto'],
     },
     extend: {
