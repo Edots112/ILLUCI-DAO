@@ -2,18 +2,19 @@ import React, { useState } from 'react';
 import Home from './pages/Home';
 import LoadingScreen from './pages/LoadingScreen';
 import './styles/index.css';
+import AppRouter from './routes/AppRouter';
 
 function App() {
-  const [isLoading, setIsLoading] = useState(true);
+  // const [isLoading, setIsLoading] = useState(true);
 
-  const handleLoadingComplete = () => {
-    setIsLoading(false);
-  };
+  // const handleLoadingComplete = () => {
+  //   setIsLoading(false);
+  // };
 
   return (
     <main className="h-[100vh]">
-      {isLoading && <LoadingScreen onFinishedLoading={handleLoadingComplete} />}
-      {!isLoading && <Home />}
+      {/* <LoadingScreen /> */}
+      <AppRouter />
     </main>
   );
 }

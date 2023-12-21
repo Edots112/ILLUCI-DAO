@@ -18,7 +18,6 @@ const LoadingScreen = ({ onFinishedLoading }) => {
             setFade(true);
             setTimeout(() => {
               setLoading(false);
-              onFinishedLoading(); // Notify App.js that loading is complete
             }, 2000);
           }
           return newPercentage;
@@ -34,7 +33,7 @@ const LoadingScreen = ({ onFinishedLoading }) => {
       clearTimeout(timeout);
       clearInterval(interval);
     };
-  }, []);
+  });
 
   if (!loading) {
     return null;
