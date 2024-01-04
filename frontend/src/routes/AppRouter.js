@@ -6,20 +6,18 @@ import Home from '../pages/Home';
 import NoPage from '../pages/NoPage';
 import MintingScreen from '../pages/MintingScreen';
 import DashboardScreen from '../pages/DashboardScreen';
-import Staking from '../components/Staking';
-import Citadel from '../components/Citadel';
+import CitadelScreen from '../pages/CitadelScreen';
 
 const AppRouter = () => {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<DashboardScreen />}>
+        <Route path="/" element={<Layout />}>
           <Route index element={<Home />} />
           <Route path="*" element={<NoPage />} />
           <Route path="minting" element={<MintingScreen />} />
           <Route path="dashboard" element={<DashboardScreen />} />
-          <Route path="staking" element={<Staking />} />
-          <Route path="citadel" element={<Citadel />} />
+          <Route path="citadel" element={<CitadelScreen />} />
         </Route>
       </Routes>
     </BrowserRouter>

@@ -50,6 +50,9 @@ const MintingPage = () => {
 
       console.log('Mint transaction:', mintTx);
       console.log('Mint transaction hash:', mintTx.transactionHash);
+
+      await checkCanMint();
+      await getContractInfo();
     } catch (error) {
       console.error('Error minting NFT:', error);
     }
@@ -116,7 +119,18 @@ const MintingPage = () => {
     }
   }, [accounts]);
 
-  return (
+  console.log('active', contractInfo.isSaleActive);
+
+  return !accounts.length ? ( // TODO - fix this
+    <div className="flex min-h-screen items-center justify-center bg-black text-white">
+      <button
+        className="rounded-lg bg-blue-500 p-4 text-white"
+        onClick={connectMetamask}
+      >
+        Connect to MetaMask
+      </button>
+    </div>
+  ) : (
     <div className="min-h-screen bg-black text-white">
       <div className="container mx-auto px-4 py-12">
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
@@ -132,7 +146,7 @@ const MintingPage = () => {
 
           <div className="flex h-full flex-col justify-between text-center">
             <div className="">
-              <h1 className="font-bolda mb-8 text-5xl">Mint Your Citizen</h1>
+              <h1 className="mb-8 font-bolda text-5xl">Mint Your Citizen</h1>
               <div className="flex items-center justify-center p-8 text-justify font-bold">
                 <h2 className="w-3/4 text-lg">
                   Every Citizen is unique and generated from random traits. When
@@ -145,24 +159,30 @@ const MintingPage = () => {
             </div>
             <div className="mt-4">
               <p className="mt-2 ">
-                <span className="font-bold text-xl">Price</span>:{' '}
+                <span className="text-xl font-bold">Price</span>:{' '}
                 {web3.utils.fromWei(contractInfo.price, 'ether')} ETH
               </p>
               <p>Sale {contractInfo.isSaleActive ? 'Active' : 'Paused'}</p>
             </div>
             <div className="mb-4">
-              {canMint === true ? (
-                <button
-                  className={
-                    'mt-4 rounded-lg bg-yellow-500 px-20 py-10 font-semibold text-black'
-                  }
-                  onClick={mintNFT}
-                  disabled={canMint === false}
-                >
-                  Mint
-                </button>
+              {canMint ? (
+                contractInfo.isSaleActive ? (
+                  <button
+                    className={
+                      'mt-4 rounded-lg bg-yellow-500 px-20 py-10 font-semibold text-black'
+                    }
+                    onClick={mintNFT}
+                    disabled={canMint === false}
+                  >
+                    Mint
+                  </button>
+                ) : (
+                  <h3 className="mt-4 rounded-lg bg-red-700 py-6 text-xl font-semibold text-black">
+                    Sale is currently paused
+                  </h3>
+                )
               ) : (
-                <h3 className="mt-4 rounded-lg bg-red-700  py-6 text-xl font-semibold text-black">
+                <h3 className="mt-4 rounded-lg bg-red-700 py-6 text-xl font-semibold text-black">
                   Max 1 transaction per Wallet
                 </h3>
               )}
@@ -172,7 +192,7 @@ const MintingPage = () => {
         <div className="container mx-auto py-4">
           <div className="grid grid-cols-1 gap-4 text-center text-white md:grid-cols-3">
             <div className="rounded-lg bg-gray-800 p-10 shadow-lg">
-              <span className="block font-bold text-3xl">
+              <span className="block text-3xl font-bold">
                 {contractInfo.totalSupply.toString()}/
                 {contractInfo.maxSupply.toString()}
               </span>
@@ -180,14 +200,14 @@ const MintingPage = () => {
             </div>
 
             <div className="rounded-lg bg-gray-800 p-10 shadow-lg">
-              <span className="block font-bold text-3xl">
+              <span className="block text-3xl font-bold">
                 {contractInfo.maxSupply.toString()}
               </span>
               <p className="mt-2">random generated ILLUCI Citizens</p>
             </div>
 
             <div className="rounded-lg bg-gray-800 p-10 shadow-lg">
-              <span className="block font-bold text-3xl">100%</span>
+              <span className="block text-3xl font-bold">100%</span>
               <p className="mt-2">Unlock all benefits when buying a Citizen </p>
             </div>
           </div>
@@ -214,5 +234,4 @@ const MintingPage = () => {
     </div>
   );
 };
-
 export default MintingPage;

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import DaoLogo from '../assets/image/DAOLOGO.png';
 import { AiFillHome } from 'react-icons/ai';
@@ -8,12 +8,26 @@ import { BsCollection } from 'react-icons/bs';
 import { IoIosSettings } from 'react-icons/io';
 
 const Navbar = () => {
+  const [isNavOpen, setIsNavOpen] = useState(false);
+
   return (
     <>
-      <nav className="fixed left-0 top-0 flex h-screen  w-64 flex-col items-center bg-gray-800">
-        <img src={DaoLogo} alt="logo" className="my-8 h-16 w-16" />
-        <div className="flex flex-col items-center justify-center">
-          <h3 className="text-md font-bolda text-pink-500">ILLUCI Citizens </h3>
+      <img
+        src={DaoLogo}
+        alt="logo"
+        className="fixed left-[7rem] top-0 z-50 mt-4 h-16 w-16 -translate-x-1/2 transform cursor-pointer"
+        onClick={() => setIsNavOpen(!isNavOpen)}
+      />
+
+      <nav
+        className={`${
+          isNavOpen ? 'translate-x-0' : '-translate-x-full'
+        } fixed left-0 top-0 z-40 flex h-screen w-60 flex-col items-center bg-gray-800 transition-transform duration-300 ease-in-out`}
+      >
+        <div className="flex flex-col items-center justify-center pt-28">
+          <h3 className="text-md mb-6 font-bold text-pink-500">
+            ILLUCI Citizens
+          </h3>
           <ul className=" ">
             <li className="">
               <Link
@@ -60,7 +74,7 @@ const Navbar = () => {
               </Link>
             </li>
           </ul>
-          <h3 className="text-md font-bolda mt-6 text-pink-500">Account </h3>
+          <h3 className="text-md mt-6 font-bolda text-pink-500">Account </h3>
           <ul className=" ">
             <li className="">
               <Link

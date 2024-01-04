@@ -6,10 +6,10 @@ const DashboardScreen = () => {
   return (
     <div className="min-h-screen w-full">
       <div className="flex h-full">
-        <div className="min-h-screen w-[23%] bg-gray-200  ">
+        <div className="min-h-screen  bg-gray-200  ">
           <Navbar />
         </div>
-        <div className="w-full bg-gray-300 p-4">
+        <div className="w-full">
           <Outlet />
         </div>
         <div className="w-2/4 bg-gray-200 p-4">
