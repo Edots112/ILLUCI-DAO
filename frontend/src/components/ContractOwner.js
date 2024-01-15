@@ -1,91 +1,87 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
+import { initializeNFTContract, initializeTokenContract } from '../services/contractSetup';
+import { ethers, utils } from 'ethers';
 import useMetamask from '../services/useMetaMask';
-import { getContract } from '../services/contractSetup';
-import { getWeb3 } from '../services/web3Setup';
-import web3 from 'web3';
 
-export const ContractOwner = ({
-  contractInfos,
-  getContractInfo,
-  setShowContractOwnerPopup,
-}) => {
+export const ContractOwner = ({ contractInfos, setShowContractOwnerPopup, getContractInfo }) => {
+  const { provider } = useMetamask();
   const [saleActive, setSaleActive] = useState(false);
   const [price, setPrice] = useState(0);
   const [baseURI, setBaseURI] = useState('');
-  const { accounts } = useMetamask();
-
-  console.log('isSaleActive', saleActive);
-  console.log('Price', price);
-  console.log('contractInfo', contractInfos);
 
   const activeSale = async () => {
     try {
-      const contract = getContract();
-      const activeSale = await contract.methods.toggleSale().send({
-        from: accounts[0],
-      });
-      console.log('Active Sale:', activeSale);
-      const isSaleActive = await contract.methods.isSaleActive().call();
+      const contract = initializeNFTContract(provider);
+      const transaction = await contract.toggleSale();
+      await transaction.wait();
+      const isSaleActive = await contract.isSaleActive();
       setSaleActive(isSaleActive);
-      console.log('Is Sale Active:', isSaleActive);
-      return activeSale;
+      getContractInfo();
     } catch (error) {
-      console.error('Error checking if user can mint:', error);
+      console.error('Error in activeSale:', error);
     }
   };
 
   const setNewPrice = async () => {
     try {
-      const contract = getContract();
-      const web3 = getWeb3();
-      const priceInWei = web3.utils.toWei(price, 'ether');
-      console.log('Price in Wei:', priceInWei);
-
-      const setNewPrice = await contract.methods.setPrice(priceInWei).send({
-        from: accounts[0],
-      });
-      console.log('Set New Price:', setNewPrice);
-      console.log('NewPrice:', price);
-      return setNewPrice;
+      const contract = initializeNFTContract(provider);
+      const transaction = await contract.setPrice(utils.parseEther(price.toString()));
+      console.log('transaction', transaction);
+      await transaction.wait();
+      getContractInfo();
     } catch (error) {
-      console.error('Error checking if user can mint:', error);
+      console.error('Error setting new price:', error);
     }
   };
 
   const setNewURI = async () => {
     try {
-      const contract = getContract();
-      const setNewURI = await contract.methods.setBaseURI().send({
-        from: accounts[0],
-      });
-      console.log('Set New URI:', setNewURI);
-      setBaseURI(setNewURI);
-      return setNewURI;
+      const contract = initializeNFTContract(provider);
+      const transaction = await contract.setBaseURI(baseURI);
+      await transaction.wait();
+      getContractInfo();
     } catch (error) {
-      console.error('Error checking if user can mint:', error);
+      console.error('Error setting new URI:', error);
     }
   };
 
-  const handlePriceChange = event => {
-    setPrice(event.target.value);
-    console.log('Price:', price);
-  };
-
-  const handleURIChange = event => {
-    setBaseURI(event.target.value);
-    console.log('URI:', baseURI);
-  };
+  const handlePriceChange = event => setPrice(event.target.value);
+  const handleURIChange = event => setBaseURI(event.target.value);
 
   const withdrawFunds = async () => {
     try {
-      const contract = getContract();
-      const withdrawFunds = await contract.methods.withdrawFunds().send({
-        from: accounts[0],
-      });
-      console.log('Withdraw Funds:', withdrawFunds);
-      return withdrawFunds;
+      const contract = initializeNFTContract(provider);
+      const transaction = await contract.withdrawFunds();
+      await transaction.wait();
     } catch (error) {
-      console.error('Error checking if user can mint:', error);
+      console.error('Error withdrawing funds:', error);
+    }
+  };
+
+  const approveSpender = async (approveAddress, amount) => {
+    try {
+      const tokenContract = initializeTokenContract(provider);
+      const approveTx = await tokenContract.approve(
+        approveAddress,
+        ethers.utils.parseUnits(amount, 18)
+      );
+      await approveTx.wait();
+    } catch (error) {
+      console.error('Error approving spender:', error);
+    }
+  };
+
+  const transferFrom = async (fromAddress, toAddress, amount) => {
+    try {
+      const tokenContract = initializeTokenContract(provider);
+      const transferFromTx = await tokenContract.transferFrom(
+        fromAddress,
+        toAddress,
+        ethers.utils.parseUnits(amount, 18)
+      );
+      await transferFromTx.wait();
+    } catch (error) {
+      console.error('Error transferring from:', error);
     }
   };
 
@@ -101,8 +97,8 @@ export const ContractOwner = ({
   };
 
   return (
-    <div className="bg-smoke-light fixed inset-0 z-50 flex overflow-auto">
-      <div className=" relative  m-auto flex max-w-xl flex-col rounded-lg bg-violet-700 p-8">
+    <div className="bg-smoke-light fixed inset-0 z-50 flex overflow-auto ">
+      <div className=" relative  m-auto flex w-1/2 flex-col rounded-lg bg-violet-700 p-10">
         <button
           className="absolute right-0 top-0  bg-blue-500  px-4 py-2 font-semibold text-white hover:bg-black"
           onClick={() => setShowContractOwnerPopup(false)}
@@ -115,9 +111,7 @@ export const ContractOwner = ({
         >
           Update Contract Info
         </button>
-        <h1 className="my-6 text-center font-bold font-roboto text-2xl">
-          Admin Panel
-        </h1>
+        <h1 className="my-6 text-center font-roboto text-2xl font-bold">Admin Panel</h1>
 
         <div className="mb-4 flex justify-center gap-4">
           {saleActive === false ? (
@@ -174,7 +168,7 @@ export const ContractOwner = ({
           <div className="my-2 flex flex-col">
             <p>
               <span className="font-semibold">Current Price:</span>{' '}
-              {web3.utils.fromWei(contractInfos.price, 'ether')}
+              {utils.formatEther(contractInfos.price)}
               ETH
             </p>
             <button
@@ -183,6 +177,82 @@ export const ContractOwner = ({
             >
               Copy Current URI
             </button>
+            <div className="mt-5 flex w-full justify-around">
+              <div className="flex flex-col items-center">
+                <h3 className="font-bold">Approve spender</h3>
+                <div className="flex flex-col">
+                  <label htmlFor="spender" className="text-white">
+                    Spender Address
+                  </label>
+                  <input
+                    type="text"
+                    id="spender"
+                    className="mb-2 bg-blue-500 p-2 text-white outline-none"
+                  />
+                  <label htmlFor="amount" className="text-white">
+                    Amount
+                  </label>
+                  <input
+                    type="number"
+                    id="amount"
+                    className="mb-4 bg-blue-500 p-2 text-white outline-none"
+                  />
+                  <button
+                    onClick={() =>
+                      approveSpender(
+                        document.getElementById('spender').value,
+                        document.getElementById('amount').value
+                      )
+                    }
+                    className="w-32 bg-blue-500 py-2 font-bold text-white hover:bg-blue-700"
+                  >
+                    Approve
+                  </button>
+                </div>
+              </div>
+
+              <div className="flex flex-col items-center">
+                <h3>TransferFrom</h3>
+                <div className="flex flex-col">
+                  <label htmlFor="fromAddress" className="text-white">
+                    From Address
+                  </label>
+                  <input
+                    type="text"
+                    id="fromAddress"
+                    className="mb-2 bg-blue-500 p-2 text-white outline-none"
+                  />
+                  <label htmlFor="toAddress" className="text-white">
+                    To Address
+                  </label>
+                  <input
+                    type="text"
+                    id="toAddress"
+                    className="mb-2 bg-blue-500 p-2 text-white outline-none"
+                  />
+                  <label htmlFor="transferAmount" className="text-white">
+                    Amount
+                  </label>
+                  <input
+                    type="number"
+                    id="transferAmount"
+                    className="mb-4 bg-blue-500 p-2 text-white outline-none"
+                  />
+                  <button
+                    onClick={() =>
+                      transferFrom(
+                        document.getElementById('fromAddress').value,
+                        document.getElementById('toAddress').value,
+                        document.getElementById('transferAmount').value
+                      )
+                    }
+                    className="w-32 bg-blue-500 py-2 font-bold text-white hover:bg-blue-700"
+                  >
+                    Transfer
+                  </button>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>

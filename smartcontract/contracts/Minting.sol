@@ -9,7 +9,7 @@ contract ILLUCI is ERC721, Ownable {
 
     uint256 public constant MAX_SUPPLY = 30;
     uint256 public constant MAX_MINT_PER_TX = 1;
-    uint256 public constant TOKEN_RESERVED = 5;
+    uint256 public constant TOKEN_RESERVED = 3;
     uint256 public PRICE = 0.03 ether;
     uint256 public constant MAX_MINT_PER_WALLET = 1;
 
@@ -66,8 +66,6 @@ contract ILLUCI is ERC721, Ownable {
         return mintedPerWallet[user] > 0;
     }
 
-    // Owner functions
-
     function setBaseURI(string memory _newBaseURI) external onlyOwner {
         baseURI = _newBaseURI;
     }
@@ -104,5 +102,13 @@ contract ILLUCI is ERC721, Ownable {
                     )
                 )
                 : "";
+    }
+
+    function fetchAllUris() external view returns (string[] memory) {
+        string[] memory uris = new string[](totalSupply);
+        for (uint256 i = 0; i < totalSupply; i++) {
+            uris[i] = tokenURI(i + 1);
+        }
+        return uris;
     }
 }

@@ -1,20 +1,33 @@
-import { getWeb3 } from './web3Setup';
-import { CONTRACT_ABI, CONTRACT_ADDRESS } from '../config';
+import { ethers } from 'ethers';
+import {
+  CONTRACT_ADDRESS_NFT,
+  CONTRACT_ADDRESS_STAKE,
+  CONTRACT_ADDRESS_TOKEN,
+  CONTRACT_ABI_NFT,
+  CONTRACT_ABI_STAKE,
+  CONTRACT_ABI_TOKEN,
+} from '../config';
 
-let contract;
-
-console.log('CONTRACT_ADDRESS', CONTRACT_ADDRESS);
-console.log('CONTRACT_ABI', CONTRACT_ABI);
-
-export function initializeContract() {
-  const web3 = getWeb3();
-  contract = new web3.eth.Contract(CONTRACT_ABI, CONTRACT_ADDRESS);
-  console.log('contract', contract);
-  console.log('contact', CONTRACT_ADDRESS);
-  console.log('ABI', CONTRACT_ABI);
-  return contract;
+export function initializeNFTContract() {
+  return initializeContract(CONTRACT_ADDRESS_NFT, CONTRACT_ABI_NFT);
 }
 
-export function getContract() {
-  return contract;
+export function initializeStakeContract() {
+  return initializeContract(CONTRACT_ADDRESS_STAKE, CONTRACT_ABI_STAKE);
+}
+
+export function initializeTokenContract() {
+  return initializeContract(CONTRACT_ADDRESS_TOKEN, CONTRACT_ABI_TOKEN);
+}
+
+function initializeContract(address, abi) {
+  if (typeof window.ethereum !== 'undefined') {
+    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    const signer = provider.getSigner();
+    const contract = new ethers.Contract(address, abi, signer);
+    return contract;
+  } else {
+    console.error('Ethereum provider not found');
+    return null;
+  }
 }
