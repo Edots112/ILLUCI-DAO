@@ -5,9 +5,13 @@ import Navbar from './Navbar';
 const Layout = () => {
   const location = useLocation();
 
+  if (location.pathname === '/' || location.pathname === '/minting') {
+    return <Outlet />;
+  }
+
   return (
     <>
-      {location.pathname !== '/' && <Navbar />}
+      <Navbar />
       <Outlet />
     </>
   );

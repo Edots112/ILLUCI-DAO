@@ -1,16 +1,21 @@
-import Web3 from 'web3';
+import { ethers } from 'ethers';
 
-let web3;
+let provider;
 
-export function initWeb3(provider) {
-  web3 = new Web3(provider || Web3.givenProvider || 'http://localhost:7545');
-  console.log('web3', web3);
-  return web3;
+export function initEthers(providerUrl) {
+  if (typeof window.ethereum !== 'undefined') {
+    provider = new ethers.providers.Web3Provider(window.ethereum);
+  } else if (providerUrl) {
+    provider = new ethers.providers.JsonRpcProvider(providerUrl);
+  } else {
+    throw new Error('No Ethereum provider found');
+  }
+  return provider;
 }
 
-export function getWeb3() {
-  if (!web3) {
-    throw new Error('Web3 is not initialized');
+export function getProvider() {
+  if (!provider) {
+    throw new Error('Ethereum provider is not initialized');
   }
-  return web3;
+  return provider;
 }

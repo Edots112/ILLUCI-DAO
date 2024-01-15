@@ -1,19 +1,28 @@
 import React from 'react';
 import Navbar from '../components/Navbar';
-import { Outlet } from 'react-router-dom';
+import DashboardMain from '../components/DashboardMain';
+import Chat from '../components/Chat';
+import ConnectMetamask from '../components/ConnectMetamask';
+import useMetamask from '../services/useMetaMask';
 
 const DashboardScreen = () => {
-  return (
-    <div className="min-h-screen w-full">
-      <div className="flex h-full">
-        <div className="min-h-screen  bg-gray-200  ">
-          <Navbar />
+  const { accounts } = useMetamask();
+
+  // TODO Add a check if you own a nft
+
+  return accounts.length === 0 ? (
+    <ConnectMetamask />
+  ) : (
+    <div className="max-h-screen w-full">
+      <div className="flex max-h-screen">
+        <div className="w-40  bg-gray-200  ">
+          <Navbar sticky={true} />
         </div>
-        <div className="w-full">
-          <Outlet />
+        <div className="w-full bg-gray-700">
+          <DashboardMain />
         </div>
-        <div className="w-2/4 bg-gray-200 p-4">
-          <p>Community/Chat</p>
+        <div className="w-2/5 bg-gray-200 p-4">
+          <Chat />
         </div>
       </div>
     </div>
