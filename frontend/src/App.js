@@ -1,19 +1,38 @@
-import React, { useState } from 'react';
-import Home from './pages/Home';
-import LoadingScreen from './pages/LoadingScreen';
+import React, { useEffect, useState } from 'react';
 import './styles/index.css';
 import AppRouter from './routes/AppRouter';
+import { initializeNFTContract } from './services/contractSetup';
+import { initEthers } from './services/web3Setup';
+import useMetamask from './services/useMetaMask';
 
 function App() {
-  // const [isLoading, setIsLoading] = useState(true);
+  const { accounts, provider, connectMetamask } = useMetamask();
 
-  // const handleLoadingComplete = () => {
-  //   setIsLoading(false);
-  // };
+  useEffect(() => {
+    if (accounts.length > 0) {
+      const init = async () => {
+        try {
+          const provider = initEthers();
+          const signer = provider.getSigner();
+          const contract = initializeNFTContract();
+          const contractOwner = await contract.owner();
+          const isOwner = contractOwner === accounts[0];
+
+          console.log('isOwner', isOwner);
+          console.log('contractOwner', contractOwner);
+        } catch (error) {
+          console.error('Error initializing app:', error);
+        }
+      };
+
+      init();
+    }
+  }, []);
+
+  console.log('accounts', accounts);
 
   return (
     <main className="h-[100vh]">
-      {/* <LoadingScreen /> */}
       <AppRouter />
     </main>
   );

@@ -11,6 +11,7 @@ module.exports = {
       backgroundImage: {
         'hero-page': "url('/src/assets/image/hero-page.jpg')",
         'hero-pages': "url('/src/assets/image/hero-page.jpg')",
+        'citadel-background': "url('/src/assets/image/citadel-background.png')",
       },
     },
   },
