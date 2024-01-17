@@ -95,15 +95,12 @@ const MintingPage = () => {
   };
 
   useEffect(() => {
-    const checkAccounts = () => {
-      if (accounts.length > 0 && provider) {
-        checkCanMint();
-        checkOwner();
-        getContractInfo();
-      }
-    };
-    checkAccounts();
-  }, [accounts, provider]);
+    if (initNftContract) {
+      checkCanMint();
+      checkOwner();
+      getContractInfo();
+    }
+  }, [initNftContract]);
 
   if (isLoading) {
     return <Loader />;
