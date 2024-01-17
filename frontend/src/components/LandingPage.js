@@ -46,6 +46,16 @@ const LandingPage = () => {
           )}
         </div>
       </div>
+      <div className="absolute bottom-0  m-3 rounded bg-pink-500 px-4 py-2 font-semibold text-white hover:bg-pink-700">
+        <a
+          className="rounded bg-pink-500 px-4 py-2 font-semibold text-white hover:bg-pink-700"
+          href="https://illuci-dao-documention.gitbook.io/illuci-dao/"
+          target="_blank"
+          rel="noreferrer"
+        >
+          Read our GitBook for more info
+        </a>
+      </div>
     </div>
   );
 };
