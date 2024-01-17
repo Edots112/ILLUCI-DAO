@@ -11,7 +11,7 @@ async function main() {
 	await Mint.waitForDeployment();
 	console.log("Miniting contract deployed to:", Mint.target);
 
-	const owner = "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266";
+	const owner = "0xDFeC87012cce2b48C6b50F389FC5fd91fE64ae66";
 
 	const Token = await hre.ethers.deployContract("ILLUCITOKEN", [owner]);
 	await Token.waitForDeployment();
