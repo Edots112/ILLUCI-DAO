@@ -127,8 +127,10 @@ const CitadelScreen = () => {
   }, [initNftContract]);
 
   useEffect(() => {
-    fetchTokenBalance();
-  }, [accounts, setBalance]);
+    if (initStakeContract) {
+      fetchTokenBalance();
+    }
+  }, [initStakeContract]);
 
   useEffect(() => {
     if (initStakeContract) {
@@ -138,9 +140,7 @@ const CitadelScreen = () => {
       };
 
       const handleClaimed = () => {
-        if (initTokenContract) {
-          fetchTokenBalance();
-        }
+        fetchTokenBalance();
       };
 
       initStakeContract.on('Unstaked', handleUnstaked);

@@ -6,6 +6,16 @@ const LandingPage = () => {
   const [showPopup, setShowPopup] = useState(false);
   const { hasNft } = useMetamask();
 
+  if (showPopup) {
+    return (
+      <Popup
+        hrefs="/minting"
+        textContent="You are not a Citizen yet. Please mint your Citizen to continue."
+        buttonContent="Mint Now"
+      />
+    );
+  }
+
   return (
     <div className="<-10+ flex h-screen w-screen snap-start items-center justify-center bg-hero-page bg-cover bg-center  bg-no-repeat text-white ">
       <div className="rounded-xl bg-black/70 p-7 text-center">
@@ -35,15 +45,6 @@ const LandingPage = () => {
           >
             Already a Citizen
           </button>
-          {showPopup && (
-            <Popup
-              hrefs="/dashboard"
-              textContent="Connect to MetaMask to continue"
-              setShowPopup={setShowPopup}
-              buttonContent="Connect MetaMask"
-              bg="bg-black/50"
-            />
-          )}
         </div>
       </div>
       <div className="absolute bottom-0  m-3 rounded bg-pink-500 px-4 py-2 font-semibold text-white hover:bg-pink-700">

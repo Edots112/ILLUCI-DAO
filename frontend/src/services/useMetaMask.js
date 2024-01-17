@@ -38,6 +38,7 @@ function useMetamask() {
           setAccounts(accounts);
         }
         const newProvider = new ethers.providers.Web3Provider(window.ethereum);
+        console.log('new provider', newProvider);
         setProvider(newProvider);
       } catch (error) {
         console.error('User denied account connection:', error);
@@ -88,24 +89,20 @@ function useMetamask() {
   }, [initNftContract]);
 
   useEffect(() => {
-    const handleAccountsChanged = async accs => {
-      if (accs.length > 0) {
-        setAccounts(accs);
-        if (provider) {
-          await checkNFTOwnership(accs[0]);
-        }
+    const handleAccountsChanged = accounts => {
+      if (accounts.length === 0) {
+        console.warn('Please connect to MetaMask.');
       } else {
-        setAccounts([]);
-        setHasNft(false);
+        setAccounts(accounts);
       }
     };
 
-    window.ethereum?.on('accountsChanged', handleAccountsChanged);
+    window.ethereum.on('accountsChanged', handleAccountsChanged);
 
     return () => {
-      window.ethereum?.removeListener('accountsChanged', handleAccountsChanged);
+      window.ethereum.removeListener('accountsChanged', handleAccountsChanged);
     };
-  }, [provider]);
+  }, [accounts]);
 
   useEffect(() => {
     const handleAccountsChanged = accs => {
