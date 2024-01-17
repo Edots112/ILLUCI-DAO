@@ -8,13 +8,13 @@ const NewsComponent = () => {
       title: 'Big Update Coming to ILLUCI',
       summary: 'An exciting new update is on the horizon, bringing new features to our community.',
       imageUrl: aheadNews,
-      readMoreUrl: '#',
+      readMoreUrl: 'big-update',
     },
     {
       title: 'ILLUCI Reaches New Milestone',
       summary: 'ILLUCI hits milestone with its growing user base.',
       imageUrl: milestone,
-      readMoreUrl: '#',
+      readMoreUrl: 'milestone',
     },
   ];
 
@@ -30,7 +30,10 @@ const NewsComponent = () => {
             />
             <h3 className="mb-2 text-xl font-semibold">{news.title}</h3>
             <p className="mb-2 text-sm">{news.summary}</p>
-            <a href={news.readMoreUrl} className="text-blue-500 hover:text-blue-700">
+            <a
+              href={`/read-news/${news.readMoreUrl}`}
+              className="text-blue-500 hover:text-blue-700"
+            >
               Read more
             </a>
           </div>

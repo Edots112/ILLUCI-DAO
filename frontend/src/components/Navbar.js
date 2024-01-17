@@ -4,6 +4,7 @@ import DaoLogo from '../assets/image/DAOLOGO.png';
 import { AiFillHome } from 'react-icons/ai';
 import { FaOptinMonster } from 'react-icons/fa6';
 import { FaRegSave } from 'react-icons/fa';
+import { FaUser } from 'react-icons/fa6';
 
 const Navbar = ({ sticky }) => {
   const [isNavOpen, setIsNavOpen] = useState(false);
@@ -18,6 +19,7 @@ const Navbar = ({ sticky }) => {
     { name: 'Home', to: '/', icon: AiFillHome },
     { name: 'Citadel', to: '/citadel', icon: FaOptinMonster },
     { name: 'Dashboard', to: '/dashboard', icon: FaRegSave },
+    { name: 'User Profile', to: '/userprofile', icon: FaUser },
   ];
 
   return (

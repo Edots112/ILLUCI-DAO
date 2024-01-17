@@ -22,13 +22,10 @@ const MintingPage = () => {
   });
   const [showPopup, setShowPopup] = useState(false);
 
-  console.log('account', accounts);
-
   const checkCanMint = async () => {
     try {
       const contract = initializeNFTContract();
       const canMint = await contract.hasMinted(accounts[0]);
-      console.log('Can mint:', canMint);
       setCanMint(!canMint);
       return canMint;
     } catch (error) {
@@ -48,7 +45,6 @@ const MintingPage = () => {
       await mintTx.wait();
       setCanMint(false);
     } catch (error) {
-      console.log('Error minting NFT:', error);
     } finally {
       setIsLoading(false);
       await getContractInfo();
@@ -77,7 +73,6 @@ const MintingPage = () => {
         price: results[3],
         currentBaseURI: results[4],
       });
-      console.log('Contract info:', results);
     } catch (error) {
       console.error('Error getting contract info:', error);
     }
@@ -85,7 +80,6 @@ const MintingPage = () => {
 
   const toggleAdminPanel = () => {
     setShowContractOwnerPopup(!showContractOwnerPopup);
-    console.log('Show Contract Owner Popup:', showContractOwnerPopup);
   };
 
   const checkOwner = async () => {
@@ -95,7 +89,6 @@ const MintingPage = () => {
         const owner = await contract.owner();
         const isOwner = owner.toLowerCase() === accounts[0].toLowerCase();
         setIsOwner(isOwner);
-        console.log('Is owner:', isOwner);
       } catch (error) {
         console.error('Error checking if user is owner:', error);
       }
@@ -112,6 +105,10 @@ const MintingPage = () => {
     };
     checkAccounts();
   }, [accounts, canMint, setIsOwner, isOwner, setAccounts]);
+
+  if (isLoading) {
+    return <Loader />;
+  }
 
   return accounts.length === 0 ? (
     <ConnectMetamask />

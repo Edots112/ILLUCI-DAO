@@ -4,27 +4,42 @@ import DashboardMain from '../components/DashboardMain';
 import Chat from '../components/Chat';
 import ConnectMetamask from '../components/ConnectMetamask';
 import useMetamask from '../services/useMetaMask';
+import Popup from '../components/Popup';
+import Loader from '../components/Loader';
 
 const DashboardScreen = () => {
-  const { accounts } = useMetamask();
+  const { accounts, hasNft, isLoading } = useMetamask();
 
-  // TODO Add a check if you own a nft
+  if (isLoading) {
+    return <Loader />;
+  }
 
-  return accounts.length === 0 ? (
-    <ConnectMetamask />
-  ) : (
+  if (accounts.length === 0) {
+    return <ConnectMetamask />;
+  }
+
+  return (
     <div className="max-h-screen w-full">
       <div className="flex max-h-screen">
-        <div className="w-40  bg-gray-200  ">
+        <div className="w-40 bg-gray-200">
           <Navbar sticky={true} />
         </div>
-        <div className="w-full bg-gray-700">
+        <div className=" w-full bg-gray-700">
           <DashboardMain />
         </div>
         <div className="w-2/5 bg-gray-200 p-4">
           <Chat />
         </div>
       </div>
+
+      {!hasNft && (
+        <Popup
+          hrefs="/minting"
+          textContent="You are not a Citizen yet. Please mint your Citizen to continue."
+          buttonContent="Mint Now"
+          bg="bg-pink-500"
+        />
+      )}
     </div>
   );
 };

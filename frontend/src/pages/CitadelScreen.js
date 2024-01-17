@@ -5,6 +5,7 @@ import ConnectMeta from '../components/ConnectMetamask';
 import Loader from '../components/Loader';
 import { calculateStakeRewards } from '../utils/calculateStakeRewards';
 import { convertIpfsToHttps, imageUri } from '../utils/covertAndChangeUri';
+import Popup from '../components/Popup';
 
 import {
   initializeNFTContract,
@@ -13,7 +14,7 @@ import {
 } from '../services/contractSetup';
 
 const CitadelScreen = () => {
-  const { accounts, provider, isLoading, setIsLoading } = useMetamask();
+  const { accounts, provider, isLoading, setIsLoading, hasNft } = useMetamask();
 
   const [isStaked, setIsStaked] = useState(false);
   const [unstakedNfts, setUnstakedNfts] = useState([]);
@@ -21,17 +22,13 @@ const CitadelScreen = () => {
   const [startTimes, setStartTimes] = useState({});
   const [counterRewards, setCounterRewards] = useState({ tokenId: null, rewards: 0 });
   const [balance, setBalance] = useState(0);
+  const [showPopup, setShowPopup] = useState(false);
 
   const userAddress = accounts[0];
-  console.log('userAddress', counterRewards);
-  console.log('staked', stakedNfts);
-  console.log('accounts', accounts);
 
-  // TODO Add a check if you own a nft
   const fetchNfts = async () => {
     setIsLoading(true);
     try {
-      console.log('fetching nfts');
       const nftContract = initializeNFTContract(provider);
       const stakeContract = initializeStakeContract(provider);
       const uris = await nftContract.fetchAllUris();
@@ -97,7 +94,6 @@ const CitadelScreen = () => {
     try {
       const stakeContract = initializeStakeContract();
       await stakeContract.unstake(tokenId).then(tx => tx.wait());
-      console.log('unstaked', tokenId);
     } catch (error) {
       console.error('Error unstaking NFT:', error);
     } finally {
@@ -121,18 +117,6 @@ const CitadelScreen = () => {
     } finally {
       fetchNfts();
       setIsLoading(false);
-      getContractTokens();
-    }
-  };
-
-  const getContractTokens = async () => {
-    try {
-      const stakeContract = initializeStakeContract(provider);
-      console.log('stakeContract', stakeContract);
-      const contractTokens = await stakeContract.getContractTokenBalance();
-      console.log('contractTokens', contractTokens.toString());
-    } catch (error) {
-      console.error('Error getting contract tokens:', error);
     }
   };
 
@@ -140,7 +124,6 @@ const CitadelScreen = () => {
     const checkAccounts = async () => {
       if (accounts.length > 0) {
         await fetchNfts();
-        await getContractTokens();
       }
     };
     checkAccounts();
@@ -153,14 +136,12 @@ const CitadelScreen = () => {
   useEffect(() => {
     const stakeContract = initializeStakeContract(provider);
 
-    const handleUnstaked = (tokenId, user) => {
-      console.log(`${tokenId} unstaked by ${user}`);
+    const handleUnstaked = () => {
       fetchNfts();
       setIsLoading(false);
     };
 
-    const handleClaimed = (tokenId, reward, user) => {
-      console.log(`Reward claimed: ${reward} for tokenId: ${tokenId} by ${user}`);
+    const handleClaimed = () => {
       fetchTokenBalance();
     };
 
@@ -200,6 +181,10 @@ const CitadelScreen = () => {
       }
     }
   };
+
+  if (isLoading) {
+    return <Loader />;
+  }
 
   if (accounts.length === 0) {
     return <ConnectMeta />;
@@ -245,6 +230,24 @@ const CitadelScreen = () => {
         approveAndStake={approveAndStake}
       />
       {isLoading && <Loader />}
+
+      {showPopup && (
+        <Popup
+          hrefs="/minting"
+          textContent="You are not a Citizen yet. Please mint your Citizen to continue."
+          setShowPopup={setShowPopup}
+          buttonContent="Mint Now"
+        />
+      )}
+
+      {!hasNft && (
+        <Popup
+          hrefs="/minting"
+          textContent="You are not a Citizen yet. Please mint your Citizen to continue."
+          buttonContent="Mint Now"
+          bg="bg-pink-500"
+        />
+      )}
     </div>
   );
 };

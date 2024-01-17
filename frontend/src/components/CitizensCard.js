@@ -1,7 +1,6 @@
 import React from 'react';
 
 const CitizensCard = ({ metadata }) => {
-  console.log('metadata', metadata);
   return (
     <div className="mb-4 flex w-72 flex-col items-center justify-center rounded-xl border">
       <img className="m-1 h-60 w-full p-2 " src={metadata.image}></img>
