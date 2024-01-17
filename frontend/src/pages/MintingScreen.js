@@ -23,7 +23,7 @@ const MintingPage = () => {
 
   const checkCanMint = async () => {
     try {
-      const contract = initializeNFTContract();
+      const contract = initializeNFTContract(accounts[0], provider);
       const canMint = await contract.hasMinted(accounts[0]);
       setCanMint(!canMint);
       return canMint;
@@ -35,7 +35,7 @@ const MintingPage = () => {
   const mintNFT = async () => {
     setIsLoading(true);
     try {
-      const contract = initializeNFTContract();
+      const contract = initializeNFTContract(accounts[0], provider);
       const mintTx = await contract._mint(1, {
         from: accounts[0],
         value: contractInfo.price,
@@ -53,7 +53,7 @@ const MintingPage = () => {
 
   const getContractInfo = async () => {
     try {
-      const contract = initializeNFTContract();
+      const contract = initializeNFTContract(accounts[0], provider);
 
       const promises = [
         contract.totalSupply(),
@@ -84,7 +84,7 @@ const MintingPage = () => {
   const checkOwner = async () => {
     if (provider && accounts[0]) {
       try {
-        const contract = initializeNFTContract(provider);
+        const contract = initializeNFTContract(accounts[0], provider);
         const owner = await contract.owner();
         const isOwner = owner.toLowerCase() === accounts[0].toLowerCase();
         setIsOwner(isOwner);

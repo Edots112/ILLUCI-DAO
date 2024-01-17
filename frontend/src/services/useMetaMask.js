@@ -45,12 +45,20 @@ function useMetamask() {
   };
 
   const checkNFTOwnership = async account => {
-    const nftContract = initializeNFTContract(provider);
-    console.log('init');
+    if (!provider) {
+      console.error('Provider is not set');
+      return;
+    }
+    if (!account) {
+      console.error('Account is not available');
+      return;
+    }
+
     try {
+      const nftContract = initializeNFTContract(provider, accounts[0]);
       const nftCount = await nftContract.balanceOf(account);
       setHasNft(nftCount.toNumber() > 0);
-      console.log('nft count', nftCount.toNumber());
+      console.log('NFT count:', nftCount.toNumber());
     } catch (error) {
       console.error('Error checking NFT ownership:', error);
     }
@@ -65,7 +73,7 @@ function useMetamask() {
     if (accounts.length > 0 && provider) {
       checkNFTOwnership(accounts[0]);
     }
-  }, [accounts, provider, setAccounts]);
+  }, [accounts, provider]);
 
   useEffect(() => {
     const handleAccountsChanged = async accs => {
