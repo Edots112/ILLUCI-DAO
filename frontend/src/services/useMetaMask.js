@@ -82,7 +82,9 @@ function useMetamask() {
   }, [provider, accounts]);
 
   useEffect(() => {
-    if (initNftContract) checkNFTOwnership(accounts[0]);
+    if (initNftContract) {
+      checkNFTOwnership(accounts[0]);
+    }
   }, [initNftContract]);
 
   useEffect(() => {
