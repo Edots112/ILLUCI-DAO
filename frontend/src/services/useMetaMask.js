@@ -52,12 +52,8 @@ function useMetamask() {
   };
 
   const checkNFTOwnership = async account => {
-    if (!provider) {
-      console.error('Provider is not set');
-      return;
-    }
-    if (!account) {
-      console.error('Account is not available');
+    if (!initNftContract) {
+      console.log('no init nft contract');
       return;
     }
 
@@ -86,10 +82,8 @@ function useMetamask() {
   }, [provider, accounts]);
 
   useEffect(() => {
-    if (accounts.length > 0 && provider) {
-      checkNFTOwnership(accounts[0]);
-    }
-  }, [accounts, provider]);
+    if (initNftContract) checkNFTOwnership(accounts[0]);
+  }, [initNftContract]);
 
   useEffect(() => {
     const handleAccountsChanged = async accs => {
