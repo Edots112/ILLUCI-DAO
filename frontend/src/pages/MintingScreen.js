@@ -1,14 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import NftPicture from '../assets/image/NFT.png';
 import useMetamask from '../services/useMetaMask';
-import { initializeNFTContract } from '../services/contractSetup';
 import { utils } from 'ethers';
 import { ContractOwner } from '../components/ContractOwner';
 import Loader from '../components/Loader';
 import ConnectMetamask from '../components/ConnectMetamask';
 
 const MintingPage = () => {
-  const { accounts, provider, isLoading, setIsLoading, setAccounts } = useMetamask();
+  const { accounts, provider, isLoading, setIsLoading, initNftContract } = useMetamask();
   const [isOwner, setIsOwner] = useState(false);
   const [canMint, setCanMint] = useState(true);
   const [showContractOwnerPopup, setShowContractOwnerPopup] = useState(false);
@@ -23,7 +22,8 @@ const MintingPage = () => {
 
   const checkCanMint = async () => {
     try {
-      const contract = initializeNFTContract(accounts[0], provider);
+      const contract = initNftContract;
+      console.log('contract', contract);
       const canMint = await contract.hasMinted(accounts[0]);
       setCanMint(!canMint);
       return canMint;
@@ -35,7 +35,7 @@ const MintingPage = () => {
   const mintNFT = async () => {
     setIsLoading(true);
     try {
-      const contract = initializeNFTContract(accounts[0], provider);
+      const contract = initNftContract;
       const mintTx = await contract._mint(1, {
         from: accounts[0],
         value: contractInfo.price,
@@ -53,7 +53,7 @@ const MintingPage = () => {
 
   const getContractInfo = async () => {
     try {
-      const contract = initializeNFTContract(accounts[0], provider);
+      const contract = initNftContract;
 
       const promises = [
         contract.totalSupply(),
@@ -84,7 +84,7 @@ const MintingPage = () => {
   const checkOwner = async () => {
     if (provider && accounts[0]) {
       try {
-        const contract = initializeNFTContract(accounts[0], provider);
+        const contract = initNftContract;
         const owner = await contract.owner();
         const isOwner = owner.toLowerCase() === accounts[0].toLowerCase();
         setIsOwner(isOwner);

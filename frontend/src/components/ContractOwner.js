@@ -1,17 +1,16 @@
 import React, { useState } from 'react';
-import { initializeNFTContract, initializeTokenContract } from '../services/contractSetup';
 import { ethers, utils } from 'ethers';
 import useMetamask from '../services/useMetaMask';
 
 export const ContractOwner = ({ contractInfos, setShowContractOwnerPopup, getContractInfo }) => {
-  const { provider } = useMetamask();
+  const { provider, initNftContract } = useMetamask();
   const [saleActive, setSaleActive] = useState(false);
   const [price, setPrice] = useState(0);
   const [baseURI, setBaseURI] = useState('');
 
   const activeSale = async () => {
     try {
-      const contract = initializeNFTContract(provider);
+      const contract = initNftContract;
       const transaction = await contract.toggleSale();
       await transaction.wait();
       const isSaleActive = await contract.isSaleActive();
@@ -24,7 +23,7 @@ export const ContractOwner = ({ contractInfos, setShowContractOwnerPopup, getCon
 
   const setNewPrice = async () => {
     try {
-      const contract = initializeNFTContract(provider);
+      const contract = initNftContract;
       const transaction = await contract.setPrice(utils.parseEther(price.toString()));
       await transaction.wait();
       getContractInfo();
@@ -35,7 +34,7 @@ export const ContractOwner = ({ contractInfos, setShowContractOwnerPopup, getCon
 
   const setNewURI = async () => {
     try {
-      const contract = initializeNFTContract(provider);
+      const contract = initNftContract;
       const transaction = await contract.setBaseURI(baseURI);
       await transaction.wait();
       getContractInfo();
@@ -49,7 +48,7 @@ export const ContractOwner = ({ contractInfos, setShowContractOwnerPopup, getCon
 
   const withdrawFunds = async () => {
     try {
-      const contract = initializeNFTContract(provider);
+      const contract = initNftContract;
       const transaction = await contract.withdrawFunds();
       await transaction.wait();
     } catch (error) {
@@ -59,7 +58,7 @@ export const ContractOwner = ({ contractInfos, setShowContractOwnerPopup, getCon
 
   const approveSpender = async (approveAddress, amount) => {
     try {
-      const tokenContract = initializeTokenContract(provider);
+      const tokenContract = initNftContract;
       const approveTx = await tokenContract.approve(
         approveAddress,
         ethers.utils.parseUnits(amount, 18)
@@ -72,7 +71,7 @@ export const ContractOwner = ({ contractInfos, setShowContractOwnerPopup, getCon
 
   const transferFrom = async (fromAddress, toAddress, amount) => {
     try {
-      const tokenContract = initializeTokenContract(provider);
+      const tokenContract = initNftContract;
       const transferFromTx = await tokenContract.transferFrom(
         fromAddress,
         toAddress,

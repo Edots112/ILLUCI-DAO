@@ -1,6 +1,10 @@
 import { useState, useEffect } from 'react';
 import { ethers } from 'ethers';
-import { initializeNFTContract } from './contractSetup';
+import {
+  initializeNFTContract,
+  initializeStakeContract,
+  initializeTokenContract,
+} from './contractSetup';
 
 function useMetamask() {
   const [isMetamaskInstalled, setIsMetamaskInstalled] = useState(false);
@@ -8,6 +12,9 @@ function useMetamask() {
   const [provider, setProvider] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [hasNft, setHasNft] = useState(false);
+  const [initNftContract, setInitNftContract] = useState(null);
+  const [initTokenContract, setInitTokenContract] = useState(null);
+  const [initStakeContract, setInitStakeContract] = useState(null);
 
   console.log('has nft', hasNft);
   console.log('accounts', accounts);
@@ -55,7 +62,7 @@ function useMetamask() {
     }
 
     try {
-      const nftContract = initializeNFTContract(provider, accounts[0]);
+      const nftContract = initNftContract;
       const nftCount = await nftContract.balanceOf(account);
       setHasNft(nftCount.toNumber() > 0);
       console.log('NFT count:', nftCount.toNumber());
@@ -68,6 +75,15 @@ function useMetamask() {
     checkMetamaskInstallation();
     connectMetamask();
   }, []);
+
+  useEffect(() => {
+    if (provider && accounts.length > 0) {
+      setInitNftContract(initializeNFTContract(provider, accounts[0]));
+      setInitStakeContract(initializeStakeContract(provider, accounts[0]));
+      setInitTokenContract(initializeTokenContract(provider, accounts[0]));
+      console.log('init contracts');
+    }
+  }, [provider, accounts]);
 
   useEffect(() => {
     if (accounts.length > 0 && provider) {
@@ -123,6 +139,9 @@ function useMetamask() {
     isLoading,
     setIsLoading,
     hasNft,
+    initNftContract,
+    initStakeContract,
+    initTokenContract,
   };
 }
 

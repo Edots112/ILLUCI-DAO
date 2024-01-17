@@ -1,20 +1,23 @@
 import React, { useState, useEffect } from 'react';
 import StakeNftCard from '../components/StakeNftCard';
 import useMetamask from '../services/useMetaMask';
-import ConnectMeta from '../components/ConnectMetamask';
+import ConnectMetamask from '../components/ConnectMetamask';
 import Loader from '../components/Loader';
 import { calculateStakeRewards } from '../utils/calculateStakeRewards';
 import { convertIpfsToHttps, imageUri } from '../utils/covertAndChangeUri';
 import Popup from '../components/Popup';
 
-import {
-  initializeNFTContract,
-  initializeStakeContract,
-  initializeTokenContract,
-} from '../services/contractSetup';
-
 const CitadelScreen = () => {
-  const { accounts, provider, isLoading, setIsLoading, hasNft } = useMetamask();
+  const {
+    accounts,
+    provider,
+    isLoading,
+    setIsLoading,
+    hasNft,
+    initNftContract,
+    initStakeContract,
+    initTokenContract,
+  } = useMetamask();
 
   const [isStaked, setIsStaked] = useState(false);
   const [unstakedNfts, setUnstakedNfts] = useState([]);
@@ -28,8 +31,8 @@ const CitadelScreen = () => {
   const fetchNfts = async () => {
     setIsLoading(true);
     try {
-      const nftContract = initializeNFTContract(provider);
-      const stakeContract = initializeStakeContract(provider);
+      const nftContract = initNftContract;
+      const stakeContract = initStakeContract;
       const uris = await nftContract.fetchAllUris();
       const totalSupply = await nftContract.totalSupply();
 
@@ -72,8 +75,8 @@ const CitadelScreen = () => {
   const approveAndStake = async tokenId => {
     setIsLoading(true);
     try {
-      const nftContract = initializeNFTContract(provider);
-      const stakeContract = initializeStakeContract(provider);
+      const nftContract = initNftContract;
+      const stakeContract = initStakeContract;
 
       const approveTx = await nftContract.approve(stakeContract.address, tokenId);
       await approveTx.wait();
@@ -91,7 +94,7 @@ const CitadelScreen = () => {
   const unStakeNft = async tokenId => {
     setIsLoading(true);
     try {
-      const stakeContract = initializeStakeContract();
+      const stakeContract = initStakeContract;
       await stakeContract.unstake(tokenId).then(tx => tx.wait());
     } catch (error) {
       console.error('Error unstaking NFT:', error);
@@ -103,7 +106,7 @@ const CitadelScreen = () => {
   const claimTokens = async tokenId => {
     setIsLoading(true);
     try {
-      const stakeContract = initializeStakeContract(provider);
+      const stakeContract = initStakeContract;
       await stakeContract.claim(tokenId).then(tx => tx.wait());
 
       setCounterRewards(prevRewards => ({
@@ -120,38 +123,35 @@ const CitadelScreen = () => {
   };
 
   useEffect(() => {
-    const checkAccounts = async () => {
-      if (accounts.length > 0) {
-        await fetchNfts();
-      }
-    };
-    checkAccounts();
-  }, [accounts]);
+    if (initNftContract) fetchNfts();
+  }, [initNftContract]);
 
   useEffect(() => {
     fetchTokenBalance();
   }, [accounts, setBalance]);
 
   useEffect(() => {
-    const stakeContract = initializeStakeContract(provider);
+    if (initStakeContract) {
+      const handleUnstaked = () => {
+        fetchNfts();
+        setIsLoading(false);
+      };
 
-    const handleUnstaked = () => {
-      fetchNfts();
-      setIsLoading(false);
-    };
+      const handleClaimed = () => {
+        if (initTokenContract) {
+          fetchTokenBalance();
+        }
+      };
 
-    const handleClaimed = () => {
-      fetchTokenBalance();
-    };
+      initStakeContract.on('Unstaked', handleUnstaked);
+      initStakeContract.on('Claimed', handleClaimed);
 
-    stakeContract.on('Unstaked', handleUnstaked);
-    stakeContract.on('Claimed', handleClaimed);
-
-    return () => {
-      stakeContract.off('Unstaked', handleUnstaked);
-      stakeContract.off('Claimed', handleClaimed);
-    };
-  }, [userAddress]);
+      return () => {
+        initStakeContract.off('Unstaked', handleUnstaked);
+        initStakeContract.off('Claimed', handleClaimed);
+      };
+    }
+  }, [initStakeContract, userAddress]);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -172,7 +172,7 @@ const CitadelScreen = () => {
   const fetchTokenBalance = async () => {
     if (accounts.length > 0) {
       try {
-        const tokenContract = initializeTokenContract(provider);
+        const tokenContract = initTokenContract;
         const balance = await tokenContract.balanceOf(accounts[0]);
         setBalance(balance.toString());
       } catch (error) {
@@ -186,7 +186,7 @@ const CitadelScreen = () => {
   }
 
   if (accounts.length === 0) {
-    return <ConnectMeta />;
+    return <ConnectMetamask />;
   }
 
   if (!hasNft) {

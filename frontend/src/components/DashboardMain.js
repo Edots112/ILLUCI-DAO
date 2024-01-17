@@ -1,20 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import CitizensCard from './CitizensCard';
-import { initializeNFTContract, initializeStakeContract } from '../services/contractSetup';
 import { convertIpfsToHttps, imageUri } from '../utils/covertAndChangeUri';
 import Loader from './Loader';
 import News from './News';
 import useMetamask from '../services/useMetaMask';
 
 const DashboardMain = () => {
-  const { isLoading, setIsLoading, accounts, provider } = useMetamask();
+  const { isLoading, setIsLoading, accounts, initNftContract, initStakeContract } = useMetamask();
   const [nfts, setNfts] = useState([]);
 
   const fetchNfts = async () => {
     try {
       setIsLoading(true);
-      const nftContract = initializeNFTContract(provider);
-      const stakeContract = initializeStakeContract(provider);
+      const nftContract = initNftContract;
+      const stakeContract = initStakeContract;
       const uris = await nftContract.fetchAllUris();
 
       const nftData = [];
@@ -49,13 +48,10 @@ const DashboardMain = () => {
   };
 
   useEffect(() => {
-    const checkAccounts = async () => {
-      if (accounts.length > 0 && provider) {
-        await fetchNfts();
-      }
-    };
-    checkAccounts();
-  }, [accounts]);
+    if (initNftContract) {
+      fetchNfts();
+    }
+  }, [initNftContract]);
 
   return (
     <div className="flex max-h-screen flex-col items-center justify-center">
