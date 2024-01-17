@@ -50,7 +50,7 @@ const DashboardMain = () => {
 
   useEffect(() => {
     const checkAccounts = async () => {
-      if (accounts.length > 0) {
+      if (accounts.length > 0 && provider) {
         await fetchNfts();
       }
     };

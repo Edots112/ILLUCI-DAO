@@ -6,7 +6,6 @@ import { utils } from 'ethers';
 import { ContractOwner } from '../components/ContractOwner';
 import Loader from '../components/Loader';
 import ConnectMetamask from '../components/ConnectMetamask';
-import Popup from '../components/Popup';
 
 const MintingPage = () => {
   const { accounts, provider, isLoading, setIsLoading, setAccounts } = useMetamask();
@@ -97,14 +96,14 @@ const MintingPage = () => {
 
   useEffect(() => {
     const checkAccounts = () => {
-      if (accounts.length > 0) {
+      if (accounts.length > 0 && provider) {
         checkCanMint();
         checkOwner();
         getContractInfo();
       }
     };
     checkAccounts();
-  }, [accounts, canMint, setIsOwner, isOwner, setAccounts]);
+  }, [accounts, provider]);
 
   if (isLoading) {
     return <Loader />;
