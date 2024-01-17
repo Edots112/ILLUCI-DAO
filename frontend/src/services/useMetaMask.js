@@ -25,38 +25,6 @@ function useMetamask() {
     return installed;
   };
 
-  // const connectMetamask = async () => {
-  //   console.log('connect metamask');
-  //   setIsLoading(true);
-  //   if (checkMetamaskInstallation()) {
-  //     try {
-  //       const existingAccounts = await window.ethereum.request({ method: 'eth_accounts' });
-  //       if (existingAccounts.length > 0) {
-  //         setAccounts(existingAccounts);
-  //       } else {
-  //         const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-  //         setAccounts(accounts);
-  //       }
-  //       const newProvider = new ethers.providers.Web3Provider(window.ethereum);
-
-  //       newProvider.on('network', (newNetwork, oldNetwork) => {
-  //         console.log('Network changed from', oldNetwork, 'to', newNetwork);
-  //       });
-
-  //       console.log('new provider', newProvider);
-  //       setProvider(newProvider);
-  //     } catch (error) {
-  //       console.error('User denied account connection:', error);
-  //     } finally {
-  //       setTimeout(() => {
-  //         setIsLoading(false);
-  //       }, 1000);
-  //     }
-  //   } else {
-  //     console.warn('MetaMask not installed');
-  //   }
-  // };
-
   const connectMetamask = async () => {
     console.log('Connecting to MetaMask');
     setIsLoading(true);
