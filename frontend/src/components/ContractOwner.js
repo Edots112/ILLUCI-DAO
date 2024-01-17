@@ -3,7 +3,7 @@ import { ethers, utils } from 'ethers';
 import useMetamask from '../services/useMetaMask';
 
 export const ContractOwner = ({ contractInfos, setShowContractOwnerPopup, getContractInfo }) => {
-  const { provider, initNftContract } = useMetamask();
+  const { initNftContract, initTokenContract } = useMetamask();
   const [saleActive, setSaleActive] = useState(false);
   const [price, setPrice] = useState(0);
   const [baseURI, setBaseURI] = useState('');
@@ -58,7 +58,7 @@ export const ContractOwner = ({ contractInfos, setShowContractOwnerPopup, getCon
 
   const approveSpender = async (approveAddress, amount) => {
     try {
-      const tokenContract = initNftContract;
+      const tokenContract = initTokenContract;
       const approveTx = await tokenContract.approve(
         approveAddress,
         ethers.utils.parseUnits(amount, 18)
@@ -71,7 +71,7 @@ export const ContractOwner = ({ contractInfos, setShowContractOwnerPopup, getCon
 
   const transferFrom = async (fromAddress, toAddress, amount) => {
     try {
-      const tokenContract = initNftContract;
+      const tokenContract = initTokenContract;
       const transferFromTx = await tokenContract.transferFrom(
         fromAddress,
         toAddress,
