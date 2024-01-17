@@ -25,30 +25,62 @@ function useMetamask() {
     return installed;
   };
 
+  // const connectMetamask = async () => {
+  //   console.log('connect metamask');
+  //   setIsLoading(true);
+  //   if (checkMetamaskInstallation()) {
+  //     try {
+  //       const existingAccounts = await window.ethereum.request({ method: 'eth_accounts' });
+  //       if (existingAccounts.length > 0) {
+  //         setAccounts(existingAccounts);
+  //       } else {
+  //         const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+  //         setAccounts(accounts);
+  //       }
+  //       const newProvider = new ethers.providers.Web3Provider(window.ethereum);
+
+  //       newProvider.on('network', (newNetwork, oldNetwork) => {
+  //         console.log('Network changed from', oldNetwork, 'to', newNetwork);
+  //       });
+
+  //       console.log('new provider', newProvider);
+  //       setProvider(newProvider);
+  //     } catch (error) {
+  //       console.error('User denied account connection:', error);
+  //     } finally {
+  //       setTimeout(() => {
+  //         setIsLoading(false);
+  //       }, 1000);
+  //     }
+  //   } else {
+  //     console.warn('MetaMask not installed');
+  //   }
+  // };
+
   const connectMetamask = async () => {
-    console.log('connect metamask');
+    console.log('Connecting to MetaMask');
     setIsLoading(true);
-    if (checkMetamaskInstallation()) {
-      try {
-        const existingAccounts = await window.ethereum.request({ method: 'eth_accounts' });
-        if (existingAccounts.length > 0) {
-          setAccounts(existingAccounts);
-        } else {
-          const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-          setAccounts(accounts);
-        }
-        const newProvider = new ethers.providers.Web3Provider(window.ethereum);
-        console.log('new provider', newProvider);
-        setProvider(newProvider);
-      } catch (error) {
-        console.error('User denied account connection:', error);
-      } finally {
-        setTimeout(() => {
-          setIsLoading(false);
-        }, 1000);
-      }
-    } else {
-      console.warn('MetaMask not installed');
+
+    if (!window.ethereum) {
+      console.warn('MetaMask is not installed');
+      setIsLoading(false);
+      return;
+    }
+
+    try {
+      const newProvider = new ethers.providers.Web3Provider(window.ethereum);
+      setProvider(newProvider);
+
+      newProvider.on('network', (newNetwork, oldNetwork) => {
+        console.log('Network changed from', oldNetwork, 'to', newNetwork);
+      });
+
+      const accounts = await newProvider.send('eth_requestAccounts', []);
+      setAccounts(accounts);
+    } catch (error) {
+      console.error('Error connecting to MetaMask:', error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -102,7 +134,7 @@ function useMetamask() {
     return () => {
       window.ethereum.removeListener('accountsChanged', handleAccountsChanged);
     };
-  }, [accounts]);
+  }, []);
 
   useEffect(() => {
     const handleAccountsChanged = accs => {
