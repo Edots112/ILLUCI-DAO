@@ -215,15 +215,6 @@ const MintingPage = () => {
           Admin Panel
         </button>
       )}
-
-      {showPopup && (
-        <Popup
-          hrefs="/dashboard"
-          textContent="You are now a Citizen. Please go to your dashboard to continue."
-          setShowPopup={setShowPopup}
-          buttonContent="Go to Dashboard"
-        />
-      )}
     </div>
   );
 };

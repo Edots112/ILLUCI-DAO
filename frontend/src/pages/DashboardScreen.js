@@ -18,6 +18,15 @@ const DashboardScreen = () => {
     return <ConnectMetamask />;
   }
 
+  if (!hasNft) {
+    return (
+      <Popup
+        hrefs="/minting"
+        textContent="You are not a Citizen yet. Please mint your Citizen to continue."
+        buttonContent="Mint Now"
+      />
+    );
+  }
   return (
     <div className="max-h-screen w-full">
       <div className="flex max-h-screen">
@@ -31,15 +40,6 @@ const DashboardScreen = () => {
           <Chat />
         </div>
       </div>
-
-      {!hasNft && (
-        <Popup
-          hrefs="/minting"
-          textContent="You are not a Citizen yet. Please mint your Citizen to continue."
-          buttonContent="Mint Now"
-          bg="bg-pink-500"
-        />
-      )}
     </div>
   );
 };

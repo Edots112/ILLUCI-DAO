@@ -22,7 +22,6 @@ const CitadelScreen = () => {
   const [startTimes, setStartTimes] = useState({});
   const [counterRewards, setCounterRewards] = useState({ tokenId: null, rewards: 0 });
   const [balance, setBalance] = useState(0);
-  const [showPopup, setShowPopup] = useState(false);
 
   const userAddress = accounts[0];
 
@@ -190,6 +189,16 @@ const CitadelScreen = () => {
     return <ConnectMeta />;
   }
 
+  if (!hasNft) {
+    return (
+      <Popup
+        hrefs="/minting"
+        textContent="You are not a Citizen yet. Please mint your Citizen to continue."
+        buttonContent="Mint Now"
+      />
+    );
+  }
+
   return (
     <div className="flex h-full flex-col justify-around bg-citadel-background bg-cover bg-center ">
       <div>
@@ -230,24 +239,6 @@ const CitadelScreen = () => {
         approveAndStake={approveAndStake}
       />
       {isLoading && <Loader />}
-
-      {showPopup && (
-        <Popup
-          hrefs="/minting"
-          textContent="You are not a Citizen yet. Please mint your Citizen to continue."
-          setShowPopup={setShowPopup}
-          buttonContent="Mint Now"
-        />
-      )}
-
-      {!hasNft && (
-        <Popup
-          hrefs="/minting"
-          textContent="You are not a Citizen yet. Please mint your Citizen to continue."
-          buttonContent="Mint Now"
-          bg="bg-pink-500"
-        />
-      )}
     </div>
   );
 };

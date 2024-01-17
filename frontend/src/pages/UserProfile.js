@@ -1,11 +1,22 @@
 import React from 'react';
 import useMetamask from '../services/useMetaMask';
 import DAOLOGO from '../assets/image/DAOLOGO.png';
+import Popup from '../components/Popup';
 
 const UserProfile = () => {
-  const { accounts } = useMetamask();
+  const { accounts, hasNft } = useMetamask();
 
   const hasPosts = false;
+
+  if (!hasNft) {
+    return (
+      <Popup
+        hrefs="/minting"
+        textContent="You are not a Citizen yet. Please mint your Citizen to continue."
+        buttonContent="Mint Now"
+      />
+    );
+  }
 
   return (
     <div className="container mx-auto flex max-w-xl items-center p-4">
