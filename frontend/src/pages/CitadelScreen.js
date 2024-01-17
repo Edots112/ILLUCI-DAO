@@ -123,7 +123,9 @@ const CitadelScreen = () => {
   };
 
   useEffect(() => {
-    if (initNftContract) fetchNfts();
+    if (initNftContract) {
+      fetchNfts();
+    }
   }, [initNftContract]);
 
   useEffect(() => {

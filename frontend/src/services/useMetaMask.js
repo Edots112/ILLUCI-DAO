@@ -16,9 +16,6 @@ function useMetamask() {
   const [initTokenContract, setInitTokenContract] = useState(null);
   const [initStakeContract, setInitStakeContract] = useState(null);
 
-  console.log('has nft', hasNft);
-  console.log('accounts', accounts);
-
   const checkMetamaskInstallation = () => {
     const installed = typeof window.ethereum !== 'undefined';
     setIsMetamaskInstalled(installed);
