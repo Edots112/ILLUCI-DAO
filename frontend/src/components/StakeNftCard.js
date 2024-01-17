@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { convertIpfsToHttps, imageUri } from '../utils/covertAndChangeUri';
+import React from 'react';
+import { convertIpfsToHttps } from '../utils/covertAndChangeUri';
 
 const StakeNftCard = ({
   isStaked,
@@ -11,8 +11,6 @@ const StakeNftCard = ({
   unstakedNfts,
 }) => {
   const nftsToShow = isStaked ? stakedNfts : unstakedNfts;
-
-  console.log('nftsToShow', nftsToShow);
   return (
     <div className="flex  flex-wrap items-center justify-center gap-10">
       {nftsToShow.map(nft => (

@@ -10,7 +10,6 @@ const DashboardMain = () => {
   const { isLoading, setIsLoading, accounts, provider } = useMetamask();
   const [nfts, setNfts] = useState([]);
 
-  console.log('accounts', accounts);
   const fetchNfts = async () => {
     try {
       setIsLoading(true);
@@ -63,7 +62,7 @@ const DashboardMain = () => {
       <h1 className=" p-3 font-bolda text-5xl">DASHBOARD</h1>
       <h2 className=" p-3 font-bolda text-3xl">Your Citizens</h2>
       <div className=" w-full">
-        <div className="mx-4 flex  items-center justify-around gap-2">
+        <div className=" mx-4 flex items-center justify-around gap-2">
           {isLoading ? (
             <Loader />
           ) : (

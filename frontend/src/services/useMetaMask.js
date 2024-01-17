@@ -1,19 +1,16 @@
 import { useState, useEffect } from 'react';
 import { ethers } from 'ethers';
-import {
-  initializeNFTContract,
-  initializeStakeContract,
-  initializeTokenContract,
-} from '../services/contractSetup';
+import { initializeNFTContract } from './contractSetup';
 
 function useMetamask() {
   const [isMetamaskInstalled, setIsMetamaskInstalled] = useState(false);
   const [accounts, setAccounts] = useState([]);
   const [provider, setProvider] = useState(null);
-  const [nftContract, setNftContract] = useState(null);
-  const [stakeContract, setStakeContract] = useState(null);
-  const [tokenContract, setTokenContract] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [hasNft, setHasNft] = useState(false);
+
+  console.log('has nft', hasNft);
+  console.log('accounts', accounts);
 
   const checkMetamaskInstallation = () => {
     const installed = typeof window.ethereum !== 'undefined';
@@ -22,6 +19,7 @@ function useMetamask() {
   };
 
   const connectMetamask = async () => {
+    console.log('connect metamask');
     setIsLoading(true);
     if (checkMetamaskInstallation()) {
       try {
@@ -34,36 +32,51 @@ function useMetamask() {
         }
         const newProvider = new ethers.providers.Web3Provider(window.ethereum);
         setProvider(newProvider);
-
-        const newNftContract = initializeNFTContract(newProvider);
-        const newStakeContract = initializeStakeContract(newProvider);
-        const newTokenContract = initializeTokenContract(newProvider);
-
-        setNftContract(newNftContract);
-        setStakeContract(newStakeContract);
-        setTokenContract(newTokenContract);
-
-        console.log('Welcome to Illuci DAO');
-        console.log('Your account:', accounts[0]);
       } catch (error) {
         console.error('User denied account connection:', error);
       } finally {
-        setIsLoading(false);
+        setTimeout(() => {
+          setIsLoading(false);
+        }, 1000);
       }
     } else {
       console.warn('MetaMask not installed');
     }
   };
 
+  const checkNFTOwnership = async account => {
+    const nftContract = initializeNFTContract(provider);
+    console.log('init');
+    try {
+      const nftCount = await nftContract.balanceOf(account);
+      setHasNft(nftCount.toNumber() > 0);
+      console.log('nft count', nftCount.toNumber());
+    } catch (error) {
+      console.error('Error checking NFT ownership:', error);
+    }
+  };
+
   useEffect(() => {
     checkMetamaskInstallation();
     connectMetamask();
-  }, [setAccounts]);
+  }, []);
 
   useEffect(() => {
-    const handleAccountsChanged = accs => {
+    if (accounts.length > 0 && provider) {
+      checkNFTOwnership(accounts[0]);
+    }
+  }, [accounts, provider, setAccounts]);
+
+  useEffect(() => {
+    const handleAccountsChanged = async accs => {
       if (accs.length > 0) {
         setAccounts(accs);
+        if (provider) {
+          await checkNFTOwnership(accs[0]);
+        }
+      } else {
+        setAccounts([]);
+        setHasNft(false);
       }
     };
 
@@ -72,13 +85,12 @@ function useMetamask() {
     return () => {
       window.ethereum?.removeListener('accountsChanged', handleAccountsChanged);
     };
-  }, []);
+  }, [provider]);
 
   useEffect(() => {
     const handleAccountsChanged = accs => {
       if (accs.length === 0) {
         setAccounts([]);
-        console.log('Please connect to MetaMask.');
       } else {
         setAccounts(accs);
       }
@@ -99,12 +111,10 @@ function useMetamask() {
     isMetamaskInstalled,
     accounts,
     provider,
-    nftContract,
-    stakeContract,
-    tokenContract,
     connectMetamask,
     isLoading,
     setIsLoading,
+    hasNft,
   };
 }
 

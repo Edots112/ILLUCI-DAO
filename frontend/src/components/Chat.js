@@ -2,7 +2,7 @@ import React from 'react';
 
 const Chat = () => {
   return (
-    <div className="flex max-h-screen flex-col bg-gray-200 ">
+    <div className="mt-20 flex max-h-screen flex-col bg-gray-200">
       <h2 className="mb-4 text-center font-bolda text-5xl">Community Chat</h2>
       <div className="flex-grow rounded-lg bg-white p-4 shadow ">
         <p className="mb-4 text-center text-lg">

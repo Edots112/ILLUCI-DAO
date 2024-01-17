@@ -26,7 +26,6 @@ export const ContractOwner = ({ contractInfos, setShowContractOwnerPopup, getCon
     try {
       const contract = initializeNFTContract(provider);
       const transaction = await contract.setPrice(utils.parseEther(price.toString()));
-      console.log('transaction', transaction);
       await transaction.wait();
       getContractInfo();
     } catch (error) {
