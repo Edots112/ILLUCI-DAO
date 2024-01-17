@@ -37,10 +37,10 @@ const LandingPage = () => {
           </button>
           {showPopup && (
             <Popup
-              hrefs="/minting"
-              textContent="You are not a Citizen yet. Please mint your Citizen to continue."
+              hrefs="/dashboard"
+              textContent="Connect to MetaMask to continue"
               setShowPopup={setShowPopup}
-              buttonContent="Mint Now"
+              buttonContent="Connect MetaMask"
               bg="bg-black/50"
             />
           )}

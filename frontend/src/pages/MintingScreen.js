@@ -110,9 +110,11 @@ const MintingPage = () => {
     return <Loader />;
   }
 
-  return accounts.length === 0 ? (
-    <ConnectMetamask />
-  ) : (
+  if (accounts.length === 0) {
+    return <ConnectMetamask />;
+  }
+
+  return (
     <div className="min-h-screen bg-black text-white">
       <button
         className="m-2 rounded bg-pink-500 p-2 py-2 font-bold text-white hover:bg-pink-800"
